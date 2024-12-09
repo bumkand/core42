@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jakand <jakand@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mmravec <mmravec@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/01 21:43:28 by jakand            #+#    #+#             */
-/*   Updated: 2024/12/08 21:21:06 by jakand           ###   ########.fr       */
+/*   Updated: 2024/12/09 12:29:34 by mmravec          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,10 @@ char	*next_line(char *buffer)
 	while (buffer[i] && buffer[i] != '\n')
 		i++;
 	if (!buffer[i])
-	{
-		free(buffer);
-		return (NULL);
-	}
+		return (free(buffer), NULL);
 	line = ft_calloc((ft_strlen(buffer) - i), sizeof(char));
 	if (!line)
-		return (NULL);
+		return (free(buffer), NULL);
 	i++;
 	j = 0;
 	while (buffer[i])
@@ -72,6 +69,8 @@ char	*get_line(int fd, char *buffer)
 
 	if (!buffer)
 		buffer = ft_calloc(1, 1);
+	if (!buffer)
+		return (NULL);
 	line = ft_calloc((BUFFER_SIZE + 1), sizeof(char));
 	if (!line)
 		return (NULL);
@@ -80,12 +79,11 @@ char	*get_line(int fd, char *buffer)
 	{
 		char_read = read(fd, line, BUFFER_SIZE);
 		if (char_read == -1)
-		{
-			free(line);
-			return (NULL);
-		}
+			return (free(line), free(buffer), NULL);
 		line[char_read] = '\0';
 		buffer = ft_free(buffer, line);
+		if (!buffer)
+			return (free(buffer), NULL);
 		if (ft_strchr(line, '\n'))
 			break ;
 	}
@@ -104,34 +102,34 @@ char	*get_next_line(int fd)
 	if (!buffer)
 		return (NULL);
 	read_line = take_line(buffer);
+	if (!read_line)
+	{
+		free(buffer);
+		buffer = NULL;
+		return (NULL);
+	}
 	buffer = next_line(buffer);
-	// naposledy pridane vdaka comu sa uvolnil jeden byte
-	if (buffer)
-    {
-        free(buffer);
-        buffer = NULL;
-    }
 	return (read_line);
 }
 
-int	main(void)
-{
-	int		fd;
-	char	*line;
-	int		i;
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*line;
+// 	int		i;
 
-	i = -1;
-	fd = open("file.txt", O_RDONLY);
-	if (fd < 0)
-	{
-		perror("Error opening file");
-		return (1);
-	}
-	while ((line = get_next_line(fd)) && ++i < 5)
-	{
-		printf("%s", line);
-		free(line);
-	}
-	close(fd);
-	return (0);
-}
+// 	i = -1;
+// 	fd = open("file.txt", O_RDONLY);
+// 	if (fd < 0)
+// 	{
+// 		perror("Error opening file");
+// 		return (1);
+// 	}
+// 	while ((line = get_next_line(fd)) && ++i < 5)
+// 	{
+// 		printf("%s", line);
+// 		free(line);
+// 	}
+// 	close(fd);
+// 	return (0);
+// }
