@@ -3,99 +3,93 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jakand <jakand@student.42.fr>              +#+  +:+       +#+        */
+/*   By: jaandras <jaandras@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/10/19 11:14:11 by jdecorte          #+#    #+#             */
-/*   Updated: 2024/12/09 21:22:54 by jakand           ###   ########.fr       */
+/*   Created: 2024/12/10 16:39:59 by jaandras          #+#    #+#             */
+/*   Updated: 2024/12/10 20:48:52 by jaandras         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_free(char *buffer, char *line)
-{
-	char	*temp;
-
-	temp = ft_strjoin(buffer, line);
-	if (!temp)
-	{
-		free(buffer);
-		return (NULL);
-	}
-	free(buffer);
-	return (temp);
-}
-
-char	*ft_strjoin(char *s1, char *s2)
-{
-	int		total;
-	char	*buffer;
-	int		i;
-	int		j;
-
-	if (!s1 || !s2)
-		return (NULL);
-	total = ft_strlen(s1) + ft_strlen(s2);
-	buffer = ft_calloc((total + 1), sizeof(char));
-	if (!buffer)
-		return (NULL);
-	i = 0;
-	while (s1[i] != '\0')
-	{
-		buffer[i] = s1[i];
-		i++;
-	}
-	j = 0;
-	while (s2[j] != '\0')
-		buffer[i++] = s2[j++];
-	buffer[i] = '\0';
-	return (buffer);
-}
-
-size_t	ft_strlen(const char *string)
-{
-	int	i;
-
-	if (!string)
-		return (0);
-	i = 0;
-	while (string[i] != '\0')
-		i++;
-	return (i);
-}
-
-char	*ft_strchr(const char *string, int character)
-{
-	char	*str;
-
-	if (!string)
-		return (NULL);
-	str = (char *)string;
-	while (*str != character && *str != '\0')
-		str++;
-	if (*str == character)
-		return (str);
-	else
-		return (NULL);
-}
-
 void	*ft_calloc(size_t nmemb, size_t size)
 {
-	char	*buffer;
+	char	*str;
 	size_t	i;
 
 	if (nmemb == 0 || size == 0)
 		return (NULL);
 	if ((nmemb * size) < nmemb || (nmemb * size) < size)
 		return (NULL);
-	buffer = malloc(nmemb * size);
-	if (!buffer)
+	str = malloc(nmemb * size);
+	if (!str)
 		return (NULL);
 	i = 0;
 	while (i < nmemb * size)
 	{
-		buffer[i] = 0;
+		str[i] = 0;
 		i++;
 	}
-	return (buffer);
+	return (str);
+}
+
+char	*ft_free_join(char *buffer, char *line)
+{
+	char	*str;
+
+	str = ft_strjoin(buffer, line);
+	if (!str)
+		return (free(buffer), NULL);
+	free(buffer);
+	return (str);
+}
+
+char	*ft_strjoin(char *s1, char *s2)
+{
+	int		total;
+	int		i;
+	int		j;
+	char	*string;
+
+	if (!s1 || !s2)
+		return (NULL);
+	total = ft_strlen(s1) + ft_strlen(s2);
+	string = ft_calloc((total + 1), sizeof(char));
+	if (!string)
+		return (NULL);
+	i = 0;
+	while (s1[i] != '\0')
+	{
+		string[i] = s1[i];
+		i++;
+	}
+	j = 0;
+	while (s2[j] != '\0')
+		string[i++] = s2[j++];
+	string[i] = '\0';
+	return (string);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	int	i;
+
+	if (!s)
+		return (0);
+	i = 0;
+	while (s[i] != '\0')
+		i++;
+	return (i);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	if (!s)
+		return (NULL);
+	while (*s != '\0' && *s != c)
+		s++;
+	if (*s == c)
+		return ((char *)s);
+	else
+		return (NULL);
 }
